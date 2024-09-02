@@ -1,27 +1,23 @@
 ---
 import MainLayout from "../layout/MainLayout.astro";
-import type {PokemonListResponse} from '../interfaces/pokemon-list.response'
+import type { PokemonListResponse } from "../interfaces/pokemon-list.response";
 import PokemonsCards from "../components/pokemons/PokemonsCards.astro";
-const resp = await fetch(' https://pokeapi.co/api/v2/pokemon');
+import Title from "@components/shared/Title.astro";
+const resp = await fetch(" https://pokeapi.co/api/v2/pokemon");
 
-const data = await resp.json() as PokemonListResponse
+const data = (await resp.json()) as PokemonListResponse;
 ---
 
-<MainLayout title='Pokemon static | Home'>
-	<h1 class='text-3xl'>Listado de pokemons</h1>
-
-	<section 
-		arial-label='Listado de pokemons'
-		class='grid grid-cols-1 sm:grid-cols-4 md:grid-cols-5 grap-4 mt-5'
-	>
-		{data?.results?.map(({name, url}) =>(
-		<PokemonsCards
-			name={name}
-			url={url}
-		/>
-		))}
-		
-	</section>
-
-
+<MainLayout title="Pokemon static | Home">
+  <Title>Listado de pokemons</Title>
+  <section
+    arial-label="Listado de pokemons"
+    class="grid grid-cols-1 sm:grid-cols-4 md:grid-cols-5 grap-4 mt-5"
+  >
+    {
+      data?.results?.map(({ name, url }) => (
+        <PokemonsCards name={name} url={url} />
+      ))
+    }
+  </section>
 </MainLayout>

@@ -1,20 +1,22 @@
 ---
 import type { GetStaticPaths } from "astro";
-import type {PokemonListResponse} from '../../interfaces/pokemon-list.response'
-import MainLayout from '../../layout/MainLayout.astro'
+import type { PokemonListResponse } from "../../interfaces/pokemon-list.response";
+import MainLayout from "../../layout/MainLayout.astro";
 import PokemonsCards from "../../components/pokemons/PokemonsCards.astro";
+import { Icon } from "astro-icon/components";
+import Title from "@components/shared/Title.astro";
 
-export const getStaticPaths = (async() => {
-  const resp = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=151`) ;
-  const { results } = await resp.json() as PokemonListResponse;
+export const getStaticPaths = (async () => {
+  const resp = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=151`);
+  const { results } = (await resp.json()) as PokemonListResponse;
 
-  return results?.map(({name,url}) => ({
-    params:{name:name},
-    props:{name:name,url:url}
-  }))
+  return results?.map(({ name, url }) => ({
+    params: { name: name },
+    props: { name: name, url: url },
+  }));
   // return [
   //   {
-  //     params:{name:'bulbasaur'}, 
+  //     params:{name:'bulbasaur'},
   //     props:{name:'bulbasaur',url:'https://pokeapi.co/api/v2/pokemon/1/'}
   //   },
   //   {
@@ -25,40 +27,49 @@ export const getStaticPaths = (async() => {
   //     params:{name:'raticate'},
   //     props:{name:'raticate',url:'https://pokeapi.co/api/v2/pokemon/19/'}
   //   }
-  //   
+  //
   // ];
 }) satisfies GetStaticPaths;
-const { name } = Astro.params
-const { url } = Astro.props
-const id = url.split('/').at(-2)
-const audioSrc = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`
-const imgSrc =`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
+const { name } = Astro.params;
+const { url } = Astro.props;
+const id = url.split("/").at(-2);
+const audioSrc = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`;
+const imgSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
 ---
 
-<MainLayout 
+<MainLayout
   title={`Pokemon - #${id} ${name}`}
   description=`Informacion del pokemon ${name}`
   image={imgSrc}
 >
   <section class="mt-10 mx-10 flex flex-col justify-center items-center">
-    <article class="" >
-      <a href="/">Regresar</a>
-      <h1 class="text-5xl capitalize">{name}</h1>
-    </article>
-    <PokemonsCards
-      name={name}
-      url={url}
-      isBig
-    />
-    <audio controls class='mt-5'>
-      <source src={audioSrc} type='audio/ogg' />
+    <section class="flex flex-row">
+      <div>
+        <article>
+          <button onclick="history.back()" class="text-blue-500"
+            >Regresar</button
+          >
+          <Title>{name}</Title>
+        </article>
+        <button id="btn-favorite" class="ml-4">
+          <Icon class="" name="heart-light" size="50" />
+          <Icon class="hidden" name="heart-full" size="50" />
+        </button>
+      </div>
+    </section>
+    <PokemonsCards name={name} url={url} isBig />
+    <audio controls class="mt-5">
+      <source src={audioSrc} type="audio/ogg" />
       your brower does not support the audio element
     </audio>
   </section>
- </MainLayout>
+</MainLayout>
 
 <style>
-a{
-  @apply hover:underline text-blue-500
-}
+  a {
+    @apply hover:underline text-blue-500;
+  }
+  #btn-favorite {
+    @apply hover:animate-pulse;
+  }
 </style>

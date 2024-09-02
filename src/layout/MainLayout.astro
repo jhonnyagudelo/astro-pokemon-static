@@ -1,44 +1,46 @@
 ---
-import { ViewTransitions } from 'astro:transitions'
-import {siteInfo} from '../consts/site-info'
+import { ViewTransitions } from "astro:transitions";
+import { siteInfo } from "../consts/site-info";
+import NavBar from "../components/shared/NavBar.astro";
 
 interface Props {
-  title:string;
-  image?:string;
-  description?:string
+  title: string;
+  image?: string;
+  description?: string;
 }
-const  {title = siteInfo?.title, description=siteInfo?.description, image } = Astro.props
+const {
+  title = siteInfo?.title,
+  description = siteInfo?.description,
+  image,
+} = Astro.props;
 ---
+
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<!-- SEO -->
-		<meta name='description' content={description}>
-		<meta name='author' content='Jhonny Stiven Agudelo'>
-		<!-- OG Metatags -->
-		<meta property='og:title' content={title}>
-		<meta property='og:description' content={description}>
-		<meta property='og:image' content={image}>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <!-- SEO -->
+    <meta name="description" content={description} />
+    <meta name="author" content="Jhonny Stiven Agudelo" />
+    <!-- OG Metatags -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
 
     <title>{title}</title>
-    <ViewTransitions/>
+    <ViewTransitions />
     <!-- <style> -->
     <!--   @view-transition{ -->
     <!--   navigation:auto -->
     <!--   } -->
     <!-- </style> -->
-	</head>
-	<body class='bg-slate-800 text-slate-100 m-auto max-w-3xl'>
-	  <main class='mt-10 '>
-  	  <slot/>
-	  </main>
-	</body>
+  </head>
+  <body class="bg-slate-800 text-slate-100 flex flex-col min-h-screen">
+    <NavBar />
+    <main class="mt-10 mx-auto flex-grow w-full max-w-4xl px-4">
+      <slot />
+    </main>
+  </body>
 </html>
-
-
-
-
-
