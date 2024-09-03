@@ -4,7 +4,7 @@ import type { PokemonListResponse } from "../../interfaces/pokemon-list.response
 import MainLayout from "../../layout/MainLayout.astro";
 import PokemonsCards from "../../components/pokemons/PokemonsCards.astro";
 import { Icon } from "astro-icon/components";
-import Title from "@components/shared/Title.astro";
+import Title from "../../components/shared/Title.astro";
 
 export const getStaticPaths = (async () => {
   const resp = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=151`);
@@ -51,9 +51,9 @@ const imgSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites
           >
           <Title>{name}</Title>
         </article>
-        <button id="btn-favorite" class="ml-4">
-          <Icon class="" name="heart-light" size="50" />
-          <Icon class="hidden" name="heart-full" size="50" />
+        <button id="btn-favorite" class="ml-4" data-name={name} data-id={id}>
+          <Icon data-outline class="" name="heart-light" size="50" />
+          <Icon data-full class="hidden" name="heart-full" size="50" />
         </button>
       </div>
     </section>
@@ -64,6 +64,80 @@ const imgSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites
     </audio>
   </section>
 </MainLayout>
+
+<script>
+import type {FavoritePokemon} from '../../interfaces/favorite-pokemons'
+  // interface FavoritePokemon {
+  //   name: string;
+  //   id: number;
+  // }
+
+  // document.addEventListener("astro:before-preparation", () => {
+  //   console.log("before-preparation");
+  // });
+
+  // document.addEventListener("astro:after-preparation", () => {
+  //   console.log("after-preparation");
+  // });
+
+  // document.addEventListener("astro:before-swap", () => {
+  //   console.log("before-swap");
+  // });
+
+  // document.addEventListener("astro:after-swap", () => {
+  //   console.log("after swap");
+  // });
+
+  // document.addEventListener("astro:page-load", () => {
+  //   console.log("page-load");
+  // });
+
+  const handlePageLoad = () => {
+    let favoritePokemons: FavoritePokemon[] = JSON.parse(
+      localStorage.getItem("favorites") ?? "[]"
+    );
+
+    const btnFavorite = document.querySelector(
+      "#btn-favorite"
+    ) as HTMLButtonElement;
+
+    const name = btnFavorite?.dataset?.name ?? "";
+    const id = btnFavorite?.dataset?.id ?? "";
+    const isFavorite = favoritePokemons.some((fav) => fav.name === name);
+
+    const heartOutline = btnFavorite?.querySelector(
+      "[data-outline]"
+    ) as HTMLElement;
+    const heartFull = btnFavorite?.querySelector("[data-full]") as HTMLElement;
+
+    //funcion para mostrar o ocualtar el corazon vacio
+    if (isFavorite) {
+      heartOutline.classList.add("hidden");
+      heartFull.classList.remove("hidden");
+    }
+
+    const toggleFavorite = () => {
+      if (isFavorite) {
+        favoritePokemons = favoritePokemons.filter(
+          (fav) => fav.name !== name
+        );
+      } else {
+        favoritePokemons.push({
+          id: +id,
+          name: name,
+        });
+      }
+      localStorage.setItem("favorites", JSON.stringify(favoritePokemons));
+    };
+
+    btnFavorite?.addEventListener("click", () => {
+      heartOutline.classList.toggle("hidden");
+      heartFull.classList.toggle("hidden");
+      toggleFavorite();
+    });
+  };
+  document.addEventListener("astro:page-load", handlePageLoad);
+</script>
 
 <style>
   a {
